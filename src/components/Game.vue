@@ -1,5 +1,5 @@
 <template>
-  <div id='game'>
+  <div id='game' @click="clearSelection">
       <div class="header">{{info}}</div>
       <ChessBoard
         :form = "form"
@@ -40,6 +40,10 @@ export default {
       }
       this.nextRole = nextRole
       this.winner = winner
+    },
+    // 清除文字被选中的状态
+    clearSelection () {
+      window.getSelection ? window.getSelection().removeAllRanges() : document.selection.empty()
     }
   },
   // 计算属性
