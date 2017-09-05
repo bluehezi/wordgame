@@ -25,23 +25,28 @@ export default {
       roleA: 'X',
       roleB: 'O',
       winner: '',
-      nextRole: 'roleA'
+      nextRole: 'roleA',
+      victory: false
     }
   },
   methods: {
     click (row, column, event) {
-      if (this.checkWinner()) {
+      if (this.victory) {
         return
       }
       if (this.chessboard[row][column]) {
         return
       }
-      this.$set(this.chessboard[row], column, this[this.nextRole])
-      if (this.checkWinner()) {
+      this.$set(this.chessboard[row], column, this[this.nextRole], this.chessboard)
+      this.victory = this.checkWinner()
+      if (this.victory) {
+        // event up
+        this.$emit('selfupdated', this.nextRole, this.winner, this.chessboard, {x: row, y: column})
         return
       }
       this.nextRole = this.nextRole === 'roleA' ? 'roleB' : 'roleA'
-      this.$emit('selfupdated', this.nextRole, this.winner)
+      // event up
+      this.$emit('selfupdated', this.nextRole, this.winner, this.chessboard, {x: row, y: column})
     },
     // 计算获胜
     checkWinner () {
@@ -57,7 +62,6 @@ export default {
       }
       if (flag) {
         this.winner = this.nextRole
-        this.$emit('selfupdated', this.nextRole, this.winner)
         return true
       }
       flag = true
@@ -70,7 +74,6 @@ export default {
       }
       if (flag) {
         this.winner = this.nextRole
-        this.$emit('selfupdated', this.nextRole, this.winner)
         return true
       }
       for (i = 0; i < this.form; ++i) {
@@ -84,7 +87,6 @@ export default {
         }
         if (flag) {
           this.winner = this.nextRole
-          this.$emit('selfupdated', this.nextRole, this.winner)
           return true
         }
         flag = true
@@ -97,7 +99,6 @@ export default {
         }
         if (flag) {
           this.winner = this.nextRole
-          this.$emit('selfupdated', this.nextRole, this.winner)
           return true
         }
       }
@@ -115,7 +116,7 @@ export default {
       }
     }
     // 自定义事件，把下一位执棋者传递过去，把winner传递过去
-    this.$emit('selfupdated', this.nextRole, this.winner)
+    this.$emit('selfupdated', this.nextRole, this.winner, null)
   },
   beforeMounted () {},
   mounted () {
@@ -143,7 +144,7 @@ export default {
     left: 50%;
     top: 50%;
     margin-left: -115px;
-    margin-top: -115px;
+    margin-top: -200px;
     font-size: 0;
     .row {
       width: 100%;
