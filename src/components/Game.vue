@@ -16,7 +16,7 @@ export default {
     return {
       nextRole: '',
       winner: '',
-      form: 3
+      form: 4
     }
   },
   components: {

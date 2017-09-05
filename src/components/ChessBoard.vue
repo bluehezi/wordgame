@@ -21,7 +21,7 @@ export default {
   },
   data: function () {
     return {
-      chessboard: [['', '', ''], ['', '', ''], ['', '', '']],
+      chessboard: [],
       roleA: 'X',
       roleB: 'O',
       winner: '',
