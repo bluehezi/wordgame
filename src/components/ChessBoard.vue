@@ -4,7 +4,7 @@
       <button 
           class="cell" 
           v-for="item in form" :key="item"
-          @click="click(row-1, item-1, $event)">
+          @click="_click(row-1, item-1, $event)">
           {{chessboard[row-1][item-1]}}
      </button>
     </div>
@@ -12,6 +12,7 @@
 </template>
 
 <script>
+import {deepCopy} from '../js/deepCopy.js'
 export default {
   props: {
     form: {
@@ -30,7 +31,7 @@ export default {
     }
   },
   methods: {
-    click (row, column, event) {
+    _click (row, column, event) {
       if (this.victory) {
         return
       }
@@ -38,18 +39,18 @@ export default {
         return
       }
       this.$set(this.chessboard[row], column, this[this.nextRole], this.chessboard)
-      this.victory = this.checkWinner()
+      this.victory = this._checkWinner()
       if (this.victory) {
         // event up
-        this.$emit('selfupdated', this.nextRole, this.winner, this.chessboard, {x: row, y: column})
+        this.$emit('selfupdated', this.nextRole, this.winner, deepCopy(this.chessboard), {x: row, y: column})
         return
       }
       this.nextRole = this.nextRole === 'roleA' ? 'roleB' : 'roleA'
       // event up
-      this.$emit('selfupdated', this.nextRole, this.winner, this.chessboard, {x: row, y: column})
+      this.$emit('selfupdated', this.nextRole, this.winner, deepCopy(this.chessboard), {x: row, y: column})
     },
     // 计算获胜
-    checkWinner () {
+    _checkWinner () {
       let i = 0
       let j = 0
       let flag = true
@@ -103,6 +104,9 @@ export default {
         }
       }
       return false
+    },
+    changeChessBoard (step) {
+      this.chessboard = deepCopy(step)
     }
   },
   beforeCreated () {},

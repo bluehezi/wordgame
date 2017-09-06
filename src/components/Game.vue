@@ -4,12 +4,17 @@
       <ChessBoard
         :form = "form"
         @selfupdated = 'selfUpdated'
+        ref="chessboard"
       >          
       </ChessBoard>
       <div class="record">
         记录: 
         <ul>
-          <li v-for="(item,index) in this.record" :key="index">{{recordInfo[index]}}</li>
+          <li 
+          v-for="(item,index) in this.record" 
+          :key="index"
+          @click="goRecord(index, $event)"
+          >{{recordInfo[index]}}</li>
         </ul>
       </div>
   </div>
@@ -36,7 +41,7 @@ export default {
     selfUpdated: function (nextRole, winner, chessboard, coordinate) {
       if (chessboard) {
         this.record.push(chessboard)
-        this.recordInfo.push(this.nextRole + '置棋于' + `(${coordinate.x},${coordinate.y})`)
+        this.recordInfo.push(this.nextRole + '置棋于' + `  (${coordinate.x},${coordinate.y})`)
       }
       this.nextRole = nextRole
       this.winner = winner
@@ -44,6 +49,17 @@ export default {
     // 清除文字被选中的状态
     clearSelection () {
       window.getSelection ? window.getSelection().removeAllRanges() : document.selection.empty()
+    },
+    goRecord (index, e) {
+      let reg = /(\d),(\d)/g
+      let coordinate = reg.exec(this.recordInfo[index])
+      if (coordinate) {
+        coordinate = {
+          x: coordinate[1],
+          y: coordinate[2]
+        }
+      }
+      this.$refs.chessboard.changeChessBoard(this.record[index])
     }
   },
   // 计算属性
@@ -84,6 +100,9 @@ export default {
       width: 100%;
       margin: 0;
       padding: 10px;
+      li {
+        cursor: pointer;
+      }
     }
   }
 }
