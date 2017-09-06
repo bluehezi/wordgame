@@ -1,18 +1,15 @@
 <template>
   <div id='chessboard'>
     <div class="row" v-for="row in form" :key="row">
-      <button 
-          class="cell" 
-          v-for="item in form" :key="item"
-          @click="_click(row-1, item-1, $event)">
-          {{chessboard[row-1][item-1]}}
-     </button>
+      <button class="cell" v-for="item in form" :key="item" @click="_click(row-1, item-1, $event)">
+        {{chessboard[row-1][item-1]}}
+      </button>
     </div>
   </div>
 </template>
 
 <script>
-import {deepCopy} from '../js/deepCopy.js'
+import { deepCopy } from '../js/deepCopy.js'
 export default {
   props: {
     form: {
@@ -42,12 +39,12 @@ export default {
       this.victory = this._checkWinner()
       if (this.victory) {
         // event up
-        this.$emit('selfupdated', this.nextRole, this.winner, deepCopy(this.chessboard), {x: row, y: column})
+        this.$emit('selfupdated', this.nextRole, this.winner, deepCopy(this.chessboard), { x: row, y: column })
         return
       }
       this.nextRole = this.nextRole === 'roleA' ? 'roleB' : 'roleA'
       // event up
-      this.$emit('selfupdated', this.nextRole, this.winner, deepCopy(this.chessboard), {x: row, y: column})
+      this.$emit('selfupdated', this.nextRole, this.winner, deepCopy(this.chessboard), { x: row, y: column })
     },
     // 计算获胜
     _checkWinner () {
@@ -105,11 +102,25 @@ export default {
       }
       return false
     },
-    changeChessBoard (step) {
-      this.chessboard = deepCopy(step)
+    changeChessBoard (step, nextRole) {
+      if (step) {
+        this.chessboard = deepCopy(step)
+      } else {
+        this.chessboard = []
+        for (let i = 0; i < this.form; ++i) {
+          let arr = []
+          this.chessboard.push(arr)
+          for (let j = 0; j < this.form; ++j) {
+            arr.push('')
+          }
+        }
+      }
+      this.victory = false
+      this.nextRole = nextRole
+      this.winner = ''
     }
   },
-  beforeCreated () {},
+  beforeCreated () { },
   created: function () {
     // 初始化chessboard 默认为[['','',''],['','',''],['','','']],默认form为{rows: 3, columns: 3}
     for (let i = 0; i < this.form; ++i) {
@@ -122,7 +133,7 @@ export default {
     // 自定义事件，把下一位执棋者传递过去，把winner传递过去
     this.$emit('selfupdated', this.nextRole, this.winner, null)
   },
-  beforeMounted () {},
+  beforeMounted () { },
   mounted () {
     // 根据传入的棋盘规格设置行的高，每个格格的宽
     Array.prototype.forEach.call(this.$el.getElementsByClassName('row'), (v, i) => {
@@ -132,44 +143,44 @@ export default {
       })
     })
   },
-  beforeUpdated () {},
-  updated () {},
-  beforeDestoryed () {},
-  destoryed () {}
+  beforeUpdated () { },
+  updated () { },
+  beforeDestoryed () { },
+  destoryed () { }
 }
 </script>
 
 <style lang="scss" scoped>
 #chessboard {
-    width: 210px;
-    height: 210px;
-    background-color: skyblue;
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    margin-left: -115px;
-    margin-top: -200px;
-    font-size: 0;
-    .row {
-      width: 100%;
-      overflow: hidden;
-      .cell {
-            height: 100%;
-            box-sizing: border-box;
-            outline: none;
-            padding: 0;
-            margin: 0;
-            border: 1px solid #000;
-            border-bottom: none;
-            border-right: none;
-            background-color: #ffffff;
-            font-size: 40px;
-            vertical-align: middle;
-            &::last-child {
-                border-bottom: 1px solid #000;
-                border-right: 1px solid #000;
-            }
-        }
+  width: 210px;
+  height: 210px;
+  background-color: skyblue;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  margin-left: -115px;
+  margin-top: -200px;
+  font-size: 0;
+  .row {
+    width: 100%;
+    overflow: hidden;
+    .cell {
+      height: 100%;
+      box-sizing: border-box;
+      outline: none;
+      padding: 0;
+      margin: 0;
+      border: 1px solid #000;
+      border-bottom: none;
+      border-right: none;
+      background-color: #ffffff;
+      font-size: 40px;
+      vertical-align: middle;
+      &::last-child {
+        border-bottom: 1px solid #000;
+        border-right: 1px solid #000;
+      }
     }
+  }
 }
 </style>
