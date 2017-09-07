@@ -22,12 +22,14 @@
         ref='modal' 
         :message="info"
         @_close="_reset"/> 
+        <SettingBar @countChange='_formChange'/>  
   </div>
 </template>
 
 <script>
 import ChessBoard from './ChessBoard'
 import Modal from './Modal'
+import SettingBar from './SettingBar'
 export default {
   data: function () {
     return {
@@ -40,7 +42,8 @@ export default {
   },
   components: {
     ChessBoard,
-    Modal
+    Modal,
+    SettingBar
   },
   updated: function () {
   },
@@ -82,7 +85,11 @@ export default {
       this.recordInfo = []
       this.winner = ''
       this.nextRole = 'roleA'
-      this.$refs.chessboard.changeChessBoard(null, this.nextRole)
+      this.$refs.chessboard.changeChessBoard(null, this.nextRole, this.form)
+    },
+    _formChange (form) {
+      this.form = form
+      this._reset()
     }
   },
   // 计算属性

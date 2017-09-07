@@ -102,18 +102,32 @@ export default {
       }
       return false
     },
-    changeChessBoard (step, nextRole) {
+    changeChessBoard (step, nextRole, form) {
       if (step) {
         this.chessboard = deepCopy(step)
       } else {
         this.chessboard = []
-        for (let i = 0; i < this.form; ++i) {
+        // 传入form参数修改棋盘的格局
+        if (!form) {
+          form = this.form
+        }
+        for (let i = 0; i < form; ++i) {
           let arr = []
           this.chessboard.push(arr)
-          for (let j = 0; j < this.form; ++j) {
+          for (let j = 0; j < form; ++j) {
             arr.push('')
           }
         }
+        // 在下一次任务队列修改棋盘的宽高
+        this.$nextTick(() => {
+          // 根据传入的棋盘规格设置行的高，每个格格的宽
+          Array.prototype.forEach.call(this.$el.getElementsByClassName('row'), (v, i) => {
+            v.style.height = 100 / this.form + '%'
+            Array.prototype.forEach.call(v.getElementsByClassName('cell'), (cell, i) => {
+              cell.style.width = 100 / this.form + '%'
+            })
+          })
+        })
       }
       this.victory = false
       this.nextRole = nextRole
@@ -146,7 +160,11 @@ export default {
   beforeUpdated () { },
   updated () { },
   beforeDestoryed () { },
-  destoryed () { }
+  destoryed () { },
+  watch: {
+    form: function (newValue, oldValue) {
+    }
+  }
 }
 </script>
 
@@ -174,7 +192,7 @@ export default {
       border-bottom: none;
       border-right: none;
       background-color: #ffffff;
-      font-size: 40px;
+      font-size: 10px;
       vertical-align: middle;
       &::last-child {
         border-bottom: 1px solid #000;
